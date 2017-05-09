@@ -10,6 +10,7 @@ app.use('/graphql', graphqlHTTP({
   graphiql: true
 }));
 
+
 db.sequelize.sync().then(function() {
   console.log('Server running on http://localhost:3000')
   app.listen(8000)

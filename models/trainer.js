@@ -6,7 +6,8 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     classMethods: {
       associate: function(models) {
-        Trainer.hasMany(models.Pokemon)
+        Trainer.Pokemon = Trainer.hasMany(models.Pokemon);
+;
       }
     }
   });

@@ -21,7 +21,7 @@ let pokemonType = new GraphQLObjectType({
     level: {
       type: GraphQLInt,
       description: 'The level of the pokemon.'
-    },
+    }
   }
 });
 
@@ -31,7 +31,10 @@ let trainerType = new GraphQLObjectType({
   // And here, we do use graphql-sequelize's attributeFields to automatically populate fields from
   // our sequelize schema.
   fields: _.assign(attributeFields(models.Trainer), {
-
+    pokemon: {
+      type: new GraphQLList(pokemonType),
+      resolve: resolver(models.Trainer.Pokemon)
+    }
   })
 });
 
@@ -53,6 +56,30 @@ let schema = new GraphQLSchema({
           }
         },
         resolve: resolver(models.Pokemon)
+      },
+      trainer: {
+        type: new GraphQLList(trainerType),
+        resolve: resolver(models.Trainer)
+      }
+    }
+  }),
+  mutation: new GraphQLObjectType({
+    name: 'RootMutationType',
+    fields: {
+      createTrainer: {
+        type: trainerType,
+        args: {
+          name: {
+            description: 'A name for the trainer',
+            type: new GraphQLNonNull(GraphQLString)
+          }
+        },
+        description: 'Creates a new trainer',
+        resolve: function(obj, {name}) {
+          return models.Trainer.create({
+            name: name
+          });
+        }
       }
     }
   })
